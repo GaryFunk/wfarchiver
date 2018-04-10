@@ -1,0 +1,101 @@
+WFArchibver
+Copyright © 2018 Gary W Funk
+
+<!-- These instructions take 30 minutes to complete starting with a new SD Card -->
+
+
+<!-- Before you start, run the following two commands, THREE TIMES -->
+sudo apt-get update
+sudo apt-get dist-upgrade
+
+sudo apt-get update
+sudo apt-get dist-upgrade
+
+sudo apt-get update
+sudo apt-get dist-upgrade
+
+<!-- Install MariaDB -->
+sudo apt-get install mariadb-server
+
+<!-- Edit the config file for MariaDB -->
+sudo nano /etc/mysql/my.cnf
+
+<!-- At the end of the file add the following two lines -->
+[mysqld]
+bind-address = 0.0.0.0
+<!-- Save the file and exit ctrl-O <enter> ctrl-X -->
+
+<!-- Restart MariaDB with the following -->
+sudo /etc/init.d/mysql restart
+
+<!-- Log into MariaDB to set the privileges and user -->
+sudo mysql -u root -p
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '';
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('');
+UPDATE mysql.user SET AUTHENTICATION_STRING=PASSWORD(''), plugin='' WHERE User='root';
+
+<!-- Create a user for yourself. Change 'UserName' to your login and 'PassWord' to your password 
+GRANT ALL PRIVILEGES ON *.* TO 'UserName'@'%' IDENTIFIED BY 'PassWord';
+
+FLUSH PRIVILEGES;
+QUIT;
+
+<!-- Install node.js -->
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+node -v
+mkdir wfarchiver
+cd wfarchiver
+
+sudo wget -N http://wf.fsoft.com/wfarchiver/create-database-tables.js
+sudo wget -N http://wf.fsoft.com/wfarchiver/air-daily-stats.js
+sudo wget -N http://wf.fsoft.com/wfarchiver/sky-daily-stats.js
+
+sudo wget -N http://wf.fsoft.com/wfarchiver/archive.js
+sudo wget -N http://wf.fsoft.com/wfarchiver/forever.json
+sudo wget -N http://wf.fsoft.com/wfarchiver/package.json
+sudo npm install
+sudo npm install forever -g
+node create-database-tables.js
+
+<!-- Run crontab and add to the end of the file -->
+crontab -e 
+<enter>
+
+@reboot /usr/bin/forever start /home/pi/wfarchiver/forever.json
+<!-- Save the file and exit ctrl-O <enter> ctrl-X -->
+
+<!-- Reboot the PI and and check the database for data -->
+
+<!-- If you get the following two lines and no errors, it's running -->
+2018-04-04 22:53:43 Starting WFArchiver
+2018-04-04 22:53:45 Listening on: 0.0.0.0:50222
+
+<!-- It is also normal to see the following errors immediately after booting -->
+<!-- This is beacause MariaDB is still starting -->
+2018-04-04 22:53:45 MariaDB (1): Error: connect ECONNREFUSED 127.0.0.1:3306
+2018-04-04 22:53:47 MariaDB (1): Error: connect ECONNREFUSED 127.0.0.1:3306
+2018-04-04 22:53:47 Error(f): Cannot enqueue Query after fatal error.
+2018-04-04 22:53:47 Error(f): Cannot enqueue Query after fatal error.
+2018-04-04 22:53:48 Error(b): Cannot enqueue Query after fatal error.
+
+
+<!-- To start the script -->
+forever start forever.json
+
+<!-- To stop the script -->
+forever stop archive.js
+
+<!-- To see what scripts are running -->
+forever list
+
+
+These scripts will collect and store the stats for today. You may run it several times each day. I suggest an hourly schedule.
+
+air-daily-stats.js
+sky-daily-stats.js  
+
+This will collect and store the stats for yesterday. You only need to run it once I suggest running it at 00:10 each day
+
+air-daily-stats.js -date yesterday
+sky-daily-stats.js -date yesterday

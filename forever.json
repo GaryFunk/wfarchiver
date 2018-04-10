@@ -1,0 +1,1 @@
+{"append": true,"script": "archive.js","sourceDir": "/home/pi/wfarchiver","workingDir": "/home/pi/wfarchiver","COMMAND": "/usr/bin/node","killSignal": "SIGTERM"}
