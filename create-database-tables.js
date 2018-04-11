@@ -1,5 +1,6 @@
 //WFArchibver
 //Copyright © 2018 Gary W Funk
+//V1.0.0
 
 const mysql = require('mysql');
 
@@ -37,7 +38,7 @@ function callFunction(cf) {
 			createHubStatus(db);
 			break;
 		case 7:
-			createRainEvent(db);
+			createPrecipEvent(db);
 			break;
 		case 8:
 			createRapidWind(db);
@@ -175,18 +176,18 @@ function createHubStatus(db) {
 	});
 }
 
-function createRainEvent(db) {
-	console.log('  Creating table RainEvent');
-	sql.query("CREATE TABLE `" + db + "`.`RainEvent` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_numner` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
+function createPrecipEvent(db) {
+	console.log('  Creating table PrecipEvent');
+	sql.query("CREATE TABLE `" + db + "`.`PrecipEvent` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_numner` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
 		if (error) {
 			if (error.code === 'ER_TABLE_EXISTS_ERROR') {
-				console.log('	Table `RainEvent` exists!');
+				console.log('	Table `PrecipEvent` exists!');
 			} else {
 				console.log(error.code);
 				return -1;
 			}
 		} else {
-			console.log('	Table `RainEvent` created');
+			console.log('	Table `PrecipEvent` created');
 		}
 		callFunction(8);
 	});

@@ -1,12 +1,13 @@
 //WFArchibver
 //Copyright © 2018 Gary W Funk
+//V1.0.0
 
 const dgram = require('dgram');
 const fs = require('fs');
 const mysql = require('mysql');
 const schedule = require('node-schedule');
 
-const version = '0.0.4';
+const version = '1.0.0';
 const port = 50222;
 const opts = {type: 'udp4', reuseAddr: true};
 const socket = dgram.createSocket(opts);

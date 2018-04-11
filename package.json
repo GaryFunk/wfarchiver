@@ -1,6 +1,6 @@
 {
-  "name": "wfarchiver",
-  "version": "0.0.4",
+  "name": "WFArchiver",
+  "version": "1.0.0",
   "private": true,
   "description": "Smart Weather Archiver for WeatherFlow Smart Weather Station",
   "main": "archive.js",

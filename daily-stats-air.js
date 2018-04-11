@@ -1,5 +1,6 @@
 //WFArchibver
 //Copyright © 2018 Gary W Funk
+//V1.0.0
 
 const fs = require('fs');
 const mysql = require('mysql');
