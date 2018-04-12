@@ -1,13 +1,13 @@
 //WFArchibver
 //Copyright © 2018 Gary W Funk
-//V1.0.0
+//V1.1.1
 
 const dgram = require('dgram');
 const fs = require('fs');
 const mysql = require('mysql');
 const schedule = require('node-schedule');
 
-const version = '1.0.0';
+const version = '1.1.1';
 const port = 50222;
 const opts = {type: 'udp4', reuseAddr: true};
 const socket = dgram.createSocket(opts);
@@ -30,6 +30,7 @@ var mysql_config = {
     password: 'weatherflow',
     database: 'weatherflow'
 };
+var DeviceData = {};
 
 var timerH = schedule.scheduleJob('0 * * * *', function(){
 	tzoffset = (new Date()).getTimezoneOffset() * 60000;
@@ -49,20 +50,6 @@ fs.appendFile(baseDir + 'archive.log', logDate() + ' Starting WFArchiver v' + ve
 sqlConnect();
 
 socket.bind(port);
-
-/*
-var result = sql.query("SELECT * FROM PrecipEvent WHERE id = 1", function(error) {
-    if (error) {
-		fs.appendFile(baseDir + 'archive.log', logDate() + ` SQL error: ${error.message}` + cr, (err) => {
-			if (err) console.log(err);
-		});
-    } else {
-		fs.appendFile(baseDir + 'archive.log', logDate() + ' SQL Connected to database' + cr, (err) => {
-			if (err) console.log(err);
-		});
-    }
-});
-*/
 
 socket.on('error', (err) => {
 	fs.appendFile(baseDir + 'archive.log', logDate() + ` Socket error: ${err.stack}` + cr, (err) => {
@@ -176,15 +163,15 @@ function sqlConnect() {
 				});
 				setTimeout(sqlConnect, 2000);
 			} else {
-				console.log('  Rename table RaiEvent');
-				sql.query("RENAME TABLE RainEvent TO PrecipEvent", function(error) {
-					if (error) {
-						console.log(error.code);
-						return -1;
-					} else {
-						console.log('	Table `RainEvent` renamed');
-					}
-				});
+//				console.log('  Rename table RainEvent');
+//				sql.query("RENAME TABLE RainEvent TO PrecipEvent", function(error) {
+//					if (error) {
+//						console.log(error.code);
+//						return -1;
+//					} else {
+//						console.log('	Table `RainEvent` renamed');
+//					}
+//				});
 			}
 		});
 	}
@@ -251,11 +238,14 @@ function ProcessUDPData(data) {
 	   	case 'rapid_wind':
 	   		insertRapidWind(J);
 	   		break;
-	   	case 'wind_debug':
-	   		break;
 	   	case 'light_debug':
 	   		break;
+	   	case 'rain_debug':
+	   		break;
+	   	case 'wind_debug':
+	   		break;
 	   	default:
+	   		console.log(logDate() + ' ' + J.type + ' skipping');
 			fs.appendFile(baseDir + 'archive.log', logDate() + ' ' + J.type + ' skipping\n', (err) => {
 				if (err) console.log(err);
 			});
@@ -264,14 +254,51 @@ function ProcessUDPData(data) {
 
 function insertDeviceStatus(J) {
 	try {
+		if (J.serial_number in DeviceData) {
+			if (DeviceData[J.serial_number]['uptime'] > J.uptime || (DeviceData[J.serial_number]['sensor'] > 0 && DeviceData[J.serial_number]['sensor'] != 4) ) {
+				sql.query('INSERT INTO DeviceEvents (datetime, serial_number, type, hub_sn, timestamp, uptime, voltage, firmware_revision, rssi, hub_rssi, sensor_status, debug) SELECT datetime, serial_number, type, hub_sn, timestamp, uptime, voltage, firmware_revision, rssi, hub_rssi, sensor_status, debug FROM DeviceStatus WHERE id = ?', [DeviceData[J.serial_number]['id']], function(error) {
+				    if (error) {
+						fs.appendFile(baseDir + 'archive.log',logDate() + ' Error(b): ' + error.message + cr, (err) => {
+							if (err) console.log(err);
+						});
+				    }
+				});
+				sql.query('INSERT INTO DeviceEvents (datetime, serial_number, type, timestamp, uptime, firmware_revision, rssi, reset_flags, stack, seq, fs) VALUES(?)', [values], function(error) {
+				    if (error) {
+						fs.appendFile(baseDir + 'archive.log',logDate() + ' Error(b): ' + error.message + cr, (err) => {
+							if (err) console.log(err);
+						});
+				    }
+				});
+			}
+		} else {
+			DeviceData[J.serial_number] = {'id': 0, 'uptime': 0, 'sensor': 0};
+			sql.query('SELECT id, uptime, sensor_status FROM DeviceStatus WHERE serial_number = ? ORDER BY id DESC LIMIT 1', [J.serial_number], function(error, results, fields) {
+				DeviceData[J.serial_number]['id'] = results[0]['id'];
+				DeviceData[J.serial_number]['uptime'] = results[0]['uptime'];
+				DeviceData[J.serial_number]['sensor'] = results[0]['sensor_status'];
+				console.log('D1');
+				console.log(DeviceData);
+				insertDeviceStatus(J);
+				return;
+			});
+		}
 		var values = [hubDate(J.timestamp),J.serial_number, J.type, J.hub_sn, J.timestamp, J.uptime, J.voltage, J.firmware_revision, J.rssi, J.hub_rssi, J.sensor_status, J.debug];
 		sql.query('INSERT INTO DeviceStatus (datetime, serial_number, type, hub_sn, timestamp, uptime, voltage, firmware_revision, rssi, hub_rssi, sensor_status, debug) VALUES(?)', [values], function(error) {
 		    if (error) {
 				fs.appendFile(baseDir + 'archive.log',logDate() + ' Error(a): ' + error.message + cr, (err) => {
 					if (err) console.log(err);
 				});
+		    } else {
+				sql.query('SELECT id FROM DeviceStatus WHERE serial_number = ? ORDER BY id DESC LIMIT 1', [J.serial_number], function(error, results, fields) {
+					DeviceData[J.serial_number]['id'] = results[0]['id'];
+				});
 		    }
 		});
+		DeviceData[J.serial_number]['uptime'] = J.uptime;
+		DeviceData[J.serial_number]['sensor'] = J.sensor_status;
+		console.log('D2');
+		console.log(DeviceData);
 	}
 	catch(e) {
 		fs.appendFile(baseDir + 'archive.log', logDate() + ' Error in insertDeviceStatus\n', (err) => {
@@ -284,13 +311,50 @@ function insertDeviceStatus(J) {
 function insertHubStatus(J) {
 	try {
 		var values = [hubDate(J.timestamp),J.serial_number, J.type, J.timestamp, J.uptime, J.firmware_revision, J.rssi, J.reset_flags, J.stack, J.seq, J.fs];
+		if (J.serial_number in DeviceData) {
+			if (DeviceData[J.serial_number]['uptime'] > J.uptime || DeviceData[J.serial_number]['firmware'] != J.firmware_revision) {
+				sql.query('INSERT INTO HubEvents (datetime, serial_number, type, timestamp, uptime, firmware_revision, rssi, reset_flags, stack, seq, fs) SELECT datetime, serial_number, type, timestamp, uptime, firmware_revision, rssi, reset_flags, stack, seq, fs FROM HubStatus WHERE id = ?', [DeviceData[J.serial_number]['id']], function(error) {
+				    if (error) {
+						fs.appendFile(baseDir + 'archive.log',logDate() + ' Error(b): ' + error.message + cr, (err) => {
+							if (err) console.log(err);
+						});
+				    }
+				});
+				sql.query('INSERT INTO HubEvents (datetime, serial_number, type, timestamp, uptime, firmware_revision, rssi, reset_flags, stack, seq, fs) VALUES(?)', [values], function(error) {
+				    if (error) {
+						fs.appendFile(baseDir + 'archive.log',logDate() + ' Error(b): ' + error.message + cr, (err) => {
+							if (err) console.log(err);
+						});
+				    }
+				});
+			}
+		} else {
+			DeviceData[J.serial_number] = {'id': 0, 'uptime': 0, 'firmware': '0'};
+			sql.query('SELECT id, uptime, firmware_revision FROM HubStatus WHERE serial_number = ? ORDER BY id DESC LIMIT 1', [J.serial_number], function(error, results, fields) {
+				DeviceData[J.serial_number]['id'] = results[0]['id'];
+				DeviceData[J.serial_number]['uptime'] = results[0]['uptime'];
+				DeviceData[J.serial_number]['firmware'] = results[0]['firmware_revision'];
+//				console.log('D1');
+//				console.log(DeviceData);
+				insertHubStatus(J);
+				return;
+			});
+		}
 		sql.query('INSERT INTO HubStatus (datetime, serial_number, type, timestamp, uptime, firmware_revision, rssi, reset_flags, stack, seq, fs) VALUES(?)', [values], function(error) {
 		    if (error) {
 				fs.appendFile(baseDir + 'archive.log',logDate() + ' Error(b): ' + error.message + cr, (err) => {
 					if (err) console.log(err);
 				});
+		    } else {
+				sql.query('SELECT id FROM HubStatus WHERE serial_number = ? ORDER BY id DESC LIMIT 1', [J.serial_number], function(error, results, fields) {
+					DeviceData[J.serial_number]['id'] = results[0]['id'];
+				});
 		    }
 		});
+		DeviceData[J.serial_number]['uptime'] = J.uptime;
+		DeviceData[J.serial_number]['firmware'] = J.firmware_revision;
+//		console.log('D2');
+//		console.log(DeviceData);
 	}
 	catch(e) {
 		fs.appendFile(baseDir + 'archive.log', logDate() + ' Error in insertHubStatus\n', (err) => {

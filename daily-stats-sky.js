@@ -83,7 +83,7 @@ function startApplication(ap) {
 		break;
 	}
 }
-	
+
 function getData(cf) {
 	
 	var sn = serialNumbers[device].serial_number;
@@ -366,7 +366,7 @@ function getPrecipEvent(theDate, sn) {
 	var dateStart = theDate + ' 00:00:00';
 	var dateEnd = theDate + ' 23:59:50';
 	var values = [sn, dateStart, dateEnd];
-	var objSQL = "SELECT COUNT(id) AS valu FROM RainEvent WHERE serial_number = ? AND datetime BETWEEN ? AND ?";
+	var objSQL = "SELECT COUNT(id) AS valu FROM PrecipEvent WHERE serial_number = ? AND datetime BETWEEN ? AND ?";
 	sql.query(objSQL, values, function(error, results, fields) {
 		if (error) {
 			console.log(error.code);
@@ -452,6 +452,10 @@ function createDates() {
 	m = d.getMonth() + 1;
 	d = d.getDate();
 	dates.yesterday = (y + '-' + ((m < 10) ? '0' + m : m) + '-' + ((d < 10) ? '0' + d : d));
+	if (doDate != 'today' && doDate != 'yesterday') {
+		dates.mydate = doDate;
+		doDate = 'mydate';
+	}
 	startApplication(3);
 }
 

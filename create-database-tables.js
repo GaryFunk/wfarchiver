@@ -127,7 +127,7 @@ function createUser(db) {
 
 function createAirObservation(db) {
 	console.log('  Creating table AirObservation');
-	sql.query("CREATE TABLE `" + db + "`.`AirObservation` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`hub_sn` char(21) DEFAULT NULL,`firmware_revision` char(3) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`pressure` decimal(5,1) DEFAULT NULL,`air_temperature` decimal(5,2) DEFAULT NULL,`relative_humidity` tinyint(3) DEFAULT NULL,`strike_count` smallint(3) DEFAULT NULL,`strike_distance` smallint(3) DEFAULT NULL,`battery` decimal(4,3) DEFAULT NULL,`report_interval` tinyint(2) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_number` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
+	sql.query("CREATE TABLE `" + db + "`.`AirObservation` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(16) DEFAULT NULL,`hub_sn` char(21) DEFAULT NULL,`firmware_revision` char(3) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`pressure` decimal(5,1) DEFAULT NULL,`air_temperature` decimal(5,2) DEFAULT NULL,`relative_humidity` tinyint(3) DEFAULT NULL,`strike_count` smallint(3) DEFAULT NULL,`strike_distance` smallint(3) DEFAULT NULL,`battery` decimal(4,3) DEFAULT NULL,`report_interval` tinyint(2) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_number` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
 		if (error) {
 			if (error.code === 'ER_TABLE_EXISTS_ERROR') {
 				console.log('	Table `AirObservation` exists!');
@@ -144,7 +144,7 @@ function createAirObservation(db) {
 
 function createDeviceStatus(db) {
 	console.log('  Creating table DeviceStatus');
-	sql.query("CREATE TABLE `" + db + "`.`DeviceStatus` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`uptime` int(11) DEFAULT NULL,`voltage` decimal(4,3) DEFAULT NULL,`firmware_revision` char(3) DEFAULT NULL,`rssi` tinyint(4) DEFAULT NULL,`hub_rssi` tinyint(4) DEFAULT NULL,`sensor_status` int(11) DEFAULT NULL,`debug` tinyint(1) DEFAULT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
+	sql.query("CREATE TABLE `" + db + "`.`DeviceStatus` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(16) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`uptime` int(11) DEFAULT NULL,`voltage` decimal(4,3) DEFAULT NULL,`firmware_revision` char(3) DEFAULT NULL,`rssi` tinyint(4) DEFAULT NULL,`hub_rssi` tinyint(4) DEFAULT NULL,`sensor_status` int(11) DEFAULT NULL,`debug` tinyint(1) DEFAULT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
 		if (error) {
 			if (error.code === 'ER_TABLE_EXISTS_ERROR') {
 				console.log('	Table `DeviceStatus` exists!');
@@ -161,7 +161,7 @@ function createDeviceStatus(db) {
 
 function createHubStatus(db) {
 	console.log('  Creating table HubStatus');
-	sql.query("CREATE TABLE `" + db + "`.`HubStatus` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` varchar(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`uptime` int(11) DEFAULT NULL,`firmware_revision` char(3) DEFAULT NULL,`rssi` tinyint(4) DEFAULT NULL,`reset_flags` varchar(50) DEFAULT NULL,`stack` varchar(50) DEFAULT NULL,`seq` int(11) DEFAULT NULL,`fs` varchar(12) DEFAULT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
+	sql.query("CREATE TABLE `" + db + "`.`HubStatus` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` varchar(12) DEFAULT NULL,`type` varchar(16) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`uptime` int(11) DEFAULT NULL,`firmware_revision` char(3) DEFAULT NULL,`rssi` tinyint(4) DEFAULT NULL,`reset_flags` varchar(50) DEFAULT NULL,`stack` varchar(50) DEFAULT NULL,`seq` int(11) DEFAULT NULL,`fs` varchar(12) DEFAULT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
 		if (error) {
 			if (error.code === 'ER_TABLE_EXISTS_ERROR') {
 				console.log('	Table `HubStatus` exists!');
@@ -178,7 +178,7 @@ function createHubStatus(db) {
 
 function createPrecipEvent(db) {
 	console.log('  Creating table PrecipEvent');
-	sql.query("CREATE TABLE `" + db + "`.`PrecipEvent` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_numner` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
+	sql.query("CREATE TABLE `" + db + "`.`PrecipEvent` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(16) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_numner` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
 		if (error) {
 			if (error.code === 'ER_TABLE_EXISTS_ERROR') {
 				console.log('	Table `PrecipEvent` exists!');
@@ -195,7 +195,7 @@ function createPrecipEvent(db) {
 
 function createRapidWind(db) {
 	console.log('  Creating table RapidWind');
-	sql.query("CREATE TABLE `" + db + "`.`RapidWind` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`wind_speed` tinyint(3) DEFAULT NULL,`wind_direction` smallint(3) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_number` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
+	sql.query("CREATE TABLE `" + db + "`.`RapidWind` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(16) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`wind_speed` tinyint(3) DEFAULT NULL,`wind_direction` smallint(3) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_number` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
 		if (error) {
 			if (error.code === 'ER_TABLE_EXISTS_ERROR') {
 				console.log('	Table `RapidWind` exists!');
@@ -212,7 +212,7 @@ function createRapidWind(db) {
 
 function createSkyObservation(db) {
 	console.log('  Creating table SkyObservation');
-	sql.query("CREATE TABLE `" + db + "`.`SkyObservation` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`firmware_revision` char(3) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`illuminance` int(11) DEFAULT NULL,`uv` decimal(3,1) DEFAULT NULL,`rain_accumulated` decimal(9,6) DEFAULT NULL,`wind_lull` tinyint(3) DEFAULT NULL,`wind_avg` tinyint(3) DEFAULT NULL,`wind_gust` tinyint(3) DEFAULT NULL,`wind_direction` smallint(3) DEFAULT NULL,`battery` decimal(4,3) DEFAULT NULL,`report_interval` tinyint(2) DEFAULT NULL,`solar_radiation` smallint(6) DEFAULT NULL,`daily_rain_accumulation` decimal(9,6) DEFAULT NULL,`precip_type` tinyint(1) DEFAULT NULL,`wind_interval` tinyint(2) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_number` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
+	sql.query("CREATE TABLE `" + db + "`.`SkyObservation` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(16) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`firmware_revision` char(3) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`illuminance` int(11) DEFAULT NULL,`uv` decimal(3,1) DEFAULT NULL,`rain_accumulated` decimal(9,6) DEFAULT NULL,`wind_lull` tinyint(3) DEFAULT NULL,`wind_avg` tinyint(3) DEFAULT NULL,`wind_gust` tinyint(3) DEFAULT NULL,`wind_direction` smallint(3) DEFAULT NULL,`battery` decimal(4,3) DEFAULT NULL,`report_interval` tinyint(2) DEFAULT NULL,`solar_radiation` smallint(6) DEFAULT NULL,`daily_rain_accumulation` decimal(9,6) DEFAULT NULL,`precip_type` tinyint(1) DEFAULT NULL,`wind_interval` tinyint(2) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_number` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timestamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
 		if (error) {
 			if (error.code === 'ER_TABLE_EXISTS_ERROR') {
 				console.log('	Table `SkyObservation` exists!');
@@ -229,7 +229,7 @@ function createSkyObservation(db) {
 
 function createStrikeEvent(db) {
 	console.log('  Creating table StrikeEvent');
-	sql.query("CREATE TABLE `" + db + "`.`StrikeEvent` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(12) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`distance` tinyint(2) DEFAULT NULL,`energy` int(11) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_number` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timespamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
+	sql.query("CREATE TABLE `" + db + "`.`StrikeEvent` (`id` int(11) NOT NULL AUTO_INCREMENT,`datetime` DATETIME DEFAULT NULL,`serial_number` char(12) DEFAULT NULL,`type` varchar(16) DEFAULT NULL,`hub_sn` char(12) DEFAULT NULL,`timestamp` int(11) DEFAULT NULL,`distance` tinyint(2) DEFAULT NULL,`energy` int(11) DEFAULT NULL,PRIMARY KEY (`id`),KEY `serial_number` (`serial_number`),KEY `hub_sn` (`hub_sn`),KEY `timespamp` (`timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", function(error) {
 		if (error) {
 			if (error.code === 'ER_TABLE_EXISTS_ERROR') {
 				console.log('	Table `StrikeEvent` exists!');

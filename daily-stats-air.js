@@ -83,7 +83,7 @@ function startApplication(ap) {
 		break;
 	}
 }
-			
+
 function getData(cf) {
 	
 	var sn = serialNumbers[device].serial_number;
@@ -324,6 +324,10 @@ function createDates() {
 	m = d.getMonth() + 1;
 	d = d.getDate();
 	dates.yesterday = (y + '-' + ((m < 10) ? '0' + m : m) + '-' + ((d < 10) ? '0' + d : d));
+	if (doDate != 'today' && doDate != 'yesterday') {
+		dates.mydate = doDate;
+		doDate = 'mydate';
+	}
 	startApplication(3);
 }
 

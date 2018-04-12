@@ -82,9 +82,11 @@ function sqlConnect() {
 	});
 }
 
+//ADD COLUMN `datetime` DATETIME NULL AFTER `id`
+//CHANGE `type` `type` VARCHAR(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL
 function alterAirObservation() {
 	console.log('  Altering table AirObservation');
-	sql.query("ALTER TABLE AirObservation ADD COLUMN `datetime` DATETIME NULL AFTER `id`", function(error) {
+	sql.query("ALTER TABLE AirObservation CHANGE `type` `type` VARCHAR(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL", function(error) {
 		if (error) {
 			if (error.code === 'ER_DUP_FIELDNAME') {
 				console.log('	Table `AirObservation` field exists!');
@@ -101,7 +103,7 @@ function alterAirObservation() {
 
 function alterDeviceStatus() {
 	console.log('  Altering table DeviceStatus');
-	sql.query("ALTER TABLE DeviceStatus ADD COLUMN `datetime` DATETIME NULL AFTER `id`", function(error) {
+	sql.query("ALTER TABLE DeviceStatus CHANGE `type` `type` VARCHAR(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL", function(error) {
 		if (error) {
 			if (error.code === 'ER_DUP_FIELDNAME') {
 				console.log('	Table `DeviceStatus` field exists!');
@@ -112,13 +114,25 @@ function alterDeviceStatus() {
 		} else {
 			console.log('	Table `DeviceStatus` altered');
 		}
-		callFunction(cf++);
+		sql.query("UPDATE DeviceStatus SET TYPE = 'device_status'", function(error) {
+			if (error) {
+				if (error.code === 'ER_DUP_FIELDNAME') {
+					console.log('	Table `DeviceStatus` field exists!');
+				} else {
+					console.log(error.code);
+					return -1;	
+				}
+			} else {
+				console.log('	Table `DeviceStatus` updated');
+			}
+			callFunction(cf++);
+		});
 	});
 }
 
 function alterHubStatus() {
 	console.log('  Altering table HubStatus');
-	sql.query("ALTER TABLE HubStatus ADD COLUMN `datetime` DATETIME NULL AFTER `id`", function(error) {
+	sql.query("ALTER TABLE HubStatus CHANGE `type` `type` VARCHAR(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL", function(error) {
 		if (error) {
 			if (error.code === 'ER_DUP_FIELDNAME') {
 				console.log('	Table `HubStatus` field exists!');
@@ -135,7 +149,7 @@ function alterHubStatus() {
 
 function alterRainEvent() {
 	console.log('  Altering table RainEvent');
-	sql.query("ALTER TABLE RainEvent ADD COLUMN `datetime` DATETIME NULL AFTER `id`", function(error) {
+	sql.query("ALTER TABLE PrecipEvent CHANGE `type` `type` VARCHAR(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL", function(error) {
 		if (error) {
 			if (error.code === 'ER_DUP_FIELDNAME') {
 				console.log('	Table `RainEvent` field exists!');
@@ -152,7 +166,7 @@ function alterRainEvent() {
 
 function alterRapidWind() {
 	console.log('  Altering table RapidWind');
-	sql.query("ALTER TABLE RapidWind ADD COLUMN `datetime` DATETIME NULL AFTER `id`", function(error) {
+	sql.query("ALTER TABLE RapidWind CHANGE `type` `type` VARCHAR(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL", function(error) {
 		if (error) {
 			if (error.code === 'ER_DUP_FIELDNAME') {
 				console.log('	Table `RapidWind` field exists!');
@@ -169,7 +183,7 @@ function alterRapidWind() {
 
 function alterSkyObservation() {
 	console.log('  Altering table SkyObservation');
-	sql.query("ALTER TABLE SkyObservation ADD COLUMN `datetime` DATETIME NULL AFTER `id`", function(error) {
+	sql.query("ALTER TABLE SkyObservation CHANGE `type` `type` VARCHAR(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL", function(error) {
 		if (error) {
 			if (error.code === 'ER_DUP_FIELDNAME') {
 				console.log('	Table `SkyObservation` field exists!');
@@ -186,7 +200,7 @@ function alterSkyObservation() {
 
 function alterStrikeEvent() {
 	console.log('  Altering table StrikeEvent');
-	sql.query("ALTER TABLE StrikeEvent ADD COLUMN `datetime` DATETIME NULL AFTER `id`", function(error) {
+	sql.query("ALTER TABLE StrikeEvent CHANGE `type` `type` VARCHAR(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL", function(error) {
 		if (error) {
 			if (error.code === 'ER_DUP_FIELDNAME') {
 				console.log('	Table `StrikeEvent` field exists!');
