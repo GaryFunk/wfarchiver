@@ -277,8 +277,8 @@ function insertDeviceStatus(J) {
 				DeviceData[J.serial_number]['id'] = results[0]['id'];
 				DeviceData[J.serial_number]['uptime'] = results[0]['uptime'];
 				DeviceData[J.serial_number]['sensor'] = results[0]['sensor_status'];
-				console.log('D1');
-				console.log(DeviceData);
+//				console.log('D1');
+//				console.log(DeviceData);
 				insertDeviceStatus(J);
 				return;
 			});
@@ -297,8 +297,8 @@ function insertDeviceStatus(J) {
 		});
 		DeviceData[J.serial_number]['uptime'] = J.uptime;
 		DeviceData[J.serial_number]['sensor'] = J.sensor_status;
-		console.log('D2');
-		console.log(DeviceData);
+//		console.log('D2');
+//		console.log(DeviceData);
 	}
 	catch(e) {
 		fs.appendFile(baseDir + 'archive.log', logDate() + ' Error in insertDeviceStatus\n', (err) => {
